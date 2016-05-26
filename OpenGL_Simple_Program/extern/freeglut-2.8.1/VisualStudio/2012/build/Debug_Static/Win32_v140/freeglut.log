@@ -1,0 +1,66 @@
+﻿Build started 26/5/2016 12:53:29 PM.
+     1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I..\..\include /Zi /nologo /W3 /WX- /Od /Oy- /D _DEBUG /D FREEGLUT_STATIC /D WIN32 /D _LIB /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"build\Debug_Static\Win32_v140\\" /Fd"build\Debug_Static\Win32_v140\freeglut.pdb" /Gd /TC /wd4996 /analyze- /errorReport:prompt ..\..\src\freeglut_callbacks.c ..\..\src\freeglut_cursor.c ..\..\src\freeglut_display.c ..\..\src\freeglut_ext.c ..\..\src\freeglut_font.c ..\..\src\freeglut_font_data.c ..\..\src\freeglut_gamemode.c ..\..\src\freeglut_geometry.c ..\..\src\freeglut_glutfont_definitions.c ..\..\src\freeglut_init.c ..\..\src\freeglut_input_devices.c ..\..\src\freeglut_joystick.c ..\..\src\freeglut_main.c ..\..\src\freeglut_menu.c ..\..\src\freeglut_misc.c ..\..\src\freeglut_overlay.c ..\..\src\freeglut_spaceball.c ..\..\src\freeglut_state.c ..\..\src\freeglut_stroke_mono_roman.c ..\..\src\freeglut_stroke_roman.c ..\..\src\freeglut_structure.c ..\..\src\freeglut_teapot.c ..\..\src\freeglut_videoresize.c ..\..\src\freeglut_window.c
+         freeglut_window.c
+         fgSetupPixelFormat(): there is still some work to do here!
+         freeglut_videoresize.c
+         freeglut_teapot.c
+         freeglut_structure.c
+         freeglut_stroke_roman.c
+         freeglut_stroke_mono_roman.c
+         freeglut_state.c
+         freeglut_spaceball.c
+         freeglut_overlay.c
+         freeglut_misc.c
+         freeglut_menu.c
+         freeglut_main.c
+         freeglut_joystick.c
+         freeglut_input_devices.c
+         freeglut_init.c
+         freeglut_glutfont_definitions.c
+         freeglut_geometry.c
+         freeglut_gamemode.c
+         freeglut_font_data.c
+         freeglut_font.c
+         Generating Code...
+         Compiling...
+         freeglut_ext.c
+         freeglut_display.c
+         freeglut_cursor.c
+         freeglut_callbacks.c
+         Generating Code...
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D _DEBUG /l"0x0409" /nologo /fo"build\Debug_Static\Win32_v140\freeglut.res" ..\..\freeglut.rc 
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\Lib.exe /OUT:"..\..\lib\x86\Debug\freeglut_static.lib" /NOLOGO /MACHINE:X86 build\Debug_Static\Win32_v140\freeglut.res
+         build\Debug_Static\Win32_v140\freeglut_callbacks.obj
+         build\Debug_Static\Win32_v140\freeglut_cursor.obj
+         build\Debug_Static\Win32_v140\freeglut_display.obj
+         build\Debug_Static\Win32_v140\freeglut_ext.obj
+         build\Debug_Static\Win32_v140\freeglut_font.obj
+         build\Debug_Static\Win32_v140\freeglut_font_data.obj
+         build\Debug_Static\Win32_v140\freeglut_gamemode.obj
+         build\Debug_Static\Win32_v140\freeglut_geometry.obj
+         build\Debug_Static\Win32_v140\freeglut_glutfont_definitions.obj
+         build\Debug_Static\Win32_v140\freeglut_init.obj
+         build\Debug_Static\Win32_v140\freeglut_input_devices.obj
+         build\Debug_Static\Win32_v140\freeglut_joystick.obj
+         build\Debug_Static\Win32_v140\freeglut_main.obj
+         build\Debug_Static\Win32_v140\freeglut_menu.obj
+         build\Debug_Static\Win32_v140\freeglut_misc.obj
+         build\Debug_Static\Win32_v140\freeglut_overlay.obj
+         build\Debug_Static\Win32_v140\freeglut_spaceball.obj
+         build\Debug_Static\Win32_v140\freeglut_state.obj
+         build\Debug_Static\Win32_v140\freeglut_stroke_mono_roman.obj
+         build\Debug_Static\Win32_v140\freeglut_stroke_roman.obj
+         build\Debug_Static\Win32_v140\freeglut_structure.obj
+         build\Debug_Static\Win32_v140\freeglut_teapot.obj
+         build\Debug_Static\Win32_v140\freeglut_videoresize.obj
+         build\Debug_Static\Win32_v140\freeglut_window.obj
+         freeglut.vcxproj -> C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\..\..\lib\x86\Debug\freeglut_static.lib
+     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.90

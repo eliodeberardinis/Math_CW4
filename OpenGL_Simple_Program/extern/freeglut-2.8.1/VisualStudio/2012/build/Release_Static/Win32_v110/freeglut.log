@@ -1,0 +1,11 @@
+﻿Build started 26/5/2016 12:51:38 PM.
+     1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(344,5): warning MSB8003: Could not find WindowsSDKDir variable from the registry.  TargetFrameworkVersion or PlatformToolset may be set to an invalid version number.
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I..\..\include /Zi /nologo /W3 /WX- /O2 /Ob2 /Oi /Oy- /GL /D NDEBUG /D FREEGLUT_STATIC /D WIN32 /D _LIB /D _MBCS /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"build\Release_Static\Win32_v110\\" /Fd"build\Release_Static\Win32_v110\vc110.pdb" /Gd /TC /wd4996 /analyze- /errorReport:prompt ..\..\src\freeglut_callbacks.c ..\..\src\freeglut_cursor.c ..\..\src\freeglut_display.c ..\..\src\freeglut_ext.c ..\..\src\freeglut_font.c ..\..\src\freeglut_font_data.c ..\..\src\freeglut_gamemode.c ..\..\src\freeglut_geometry.c ..\..\src\freeglut_glutfont_definitions.c ..\..\src\freeglut_init.c ..\..\src\freeglut_input_devices.c ..\..\src\freeglut_joystick.c ..\..\src\freeglut_main.c ..\..\src\freeglut_menu.c ..\..\src\freeglut_misc.c ..\..\src\freeglut_overlay.c ..\..\src\freeglut_spaceball.c ..\..\src\freeglut_state.c ..\..\src\freeglut_stroke_mono_roman.c ..\..\src\freeglut_stroke_roman.c ..\..\src\freeglut_structure.c ..\..\src\freeglut_teapot.c ..\..\src\freeglut_videoresize.c ..\..\src\freeglut_window.c
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppCommon.targets(347,5): error MSB6006: "CL.exe" exited with code -1073741515.
+     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.10
