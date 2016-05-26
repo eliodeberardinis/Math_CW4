@@ -1,5 +1,5 @@
-﻿Build started 26/5/2016 12:53:29 PM.
-     1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" on node 2 (Build target(s)).
+﻿Build started 26/5/2016 9:31:48 PM.
+     1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I..\..\include /Zi /nologo /W3 /WX- /Od /Oy- /D _DEBUG /D FREEGLUT_STATIC /D WIN32 /D _LIB /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"build\Debug_Static\Win32_v140\\" /Fd"build\Debug_Static\Win32_v140\freeglut.pdb" /Gd /TC /wd4996 /analyze- /errorReport:prompt ..\..\src\freeglut_callbacks.c ..\..\src\freeglut_cursor.c ..\..\src\freeglut_display.c ..\..\src\freeglut_ext.c ..\..\src\freeglut_font.c ..\..\src\freeglut_font_data.c ..\..\src\freeglut_gamemode.c ..\..\src\freeglut_geometry.c ..\..\src\freeglut_glutfont_definitions.c ..\..\src\freeglut_init.c ..\..\src\freeglut_input_devices.c ..\..\src\freeglut_joystick.c ..\..\src\freeglut_main.c ..\..\src\freeglut_menu.c ..\..\src\freeglut_misc.c ..\..\src\freeglut_overlay.c ..\..\src\freeglut_spaceball.c ..\..\src\freeglut_state.c ..\..\src\freeglut_stroke_mono_roman.c ..\..\src\freeglut_stroke_roman.c ..\..\src\freeglut_structure.c ..\..\src\freeglut_teapot.c ..\..\src\freeglut_videoresize.c ..\..\src\freeglut_window.c
          freeglut_window.c
@@ -59,8 +59,8 @@
          build\Debug_Static\Win32_v140\freeglut_videoresize.obj
          build\Debug_Static\Win32_v140\freeglut_window.obj
          freeglut.vcxproj -> C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\..\..\lib\x86\Debug\freeglut_static.lib
-     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\freeglut-2.8.1\VisualStudio\2012\freeglut.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:05.90
+Time Elapsed 00:00:06.31
