@@ -136,7 +136,7 @@
       <RuntimeLibrary>
       </RuntimeLibrary>
       <OmitDefaultLibName>false</OmitDefaultLibName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

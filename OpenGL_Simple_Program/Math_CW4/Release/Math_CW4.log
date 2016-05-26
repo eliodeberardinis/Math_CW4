@@ -1,7 +1,7 @@
-﻿Build started 26/5/2016 9:22:47 PM.
+﻿Build started 26/5/2016 9:47:46 PM.
      1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\inc /I"..\extern\freeglut-2.8.1\include" /I"..\extern\glew-1.13.0\include" /I"..\extern\glm-0.9.7.5" /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /Zl /errorReport:prompt Camera.cpp main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\inc /I"..\extern\freeglut-2.8.1\include" /I"..\extern\glew-1.13.0\include" /I"..\extern\glm-0.9.7.5" /Z7 /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Camera.cpp main.cpp
          Camera.cpp
          main.cpp
        Link:
@@ -15,4 +15,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.67
+Time Elapsed 00:00:06.62
