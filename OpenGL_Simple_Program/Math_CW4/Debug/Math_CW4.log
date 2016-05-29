@@ -1,14 +1,16 @@
-﻿Build started 29/5/2016 6:30:05 PM.
-     1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" on node 2 (Build target(s)).
+﻿Build started 29/5/2016 6:33:01 PM.
+     1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\inc /I"..\extern\freeglut-2.8.1\include" /I"..\extern\glew-1.13.0\include" /I"..\extern\glm-0.9.7.5" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\inc /I"..\extern\freeglut-2.8.1\include" /I"..\extern\glew-1.13.0\include" /I"..\extern\glm-0.9.7.5" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Camera.cpp main.cpp
          main.cpp
+         Camera.cpp
+         Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\bin\Math_CW4d.exe" /INCREMENTAL /NOLOGO /LIBPATH:"..\extern\freeglut-2.8.1\lib\x86\Debug" /LIBPATH:"..\extern\glew-1.13.0\lib\Debug\Win32" glew32sd.lib freeglut_static.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:msvcrtd.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:".\bin\Math_CW4d.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\bin\Math_CW4d.lib" /MACHINE:X86 Debug\Camera.obj
          Debug\main.obj
          Math_CW4.vcxproj -> C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\.\bin\Math_CW4d.exe
-     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.89
+Time Elapsed 00:00:04.20
