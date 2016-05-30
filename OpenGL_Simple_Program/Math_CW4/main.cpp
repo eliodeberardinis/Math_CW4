@@ -1,6 +1,14 @@
 #include <Tutorial1PCH.h>
 #include <Camera.h>
 
+#define POSITION_ATTRIBUTE 0
+#define NORMAL_ATTRIBUTE 2
+#define DIFFUSE_ATTRIBUTE 3
+#define SPECULAR_ATTRIBUTE 4
+#define TEXCOORD0_ATTRIBUTE 8
+#define TEXCOORD1_ATTRIBUTE 9
+#define TEXCOORD2_ATTRIBUTE 10
+
 
 //Macros Used for the vertex buffer
 #define BUFFER_OFFSET(offset) ((void*)(offset))
@@ -25,6 +33,10 @@ glm::ivec2 g_MousePos;
 //Store the initial rotation of the object
 glm::quat g_Rotation;
 
+float g_fSunRotation = 0.0f;
+float g_fEarthRotation = 0.0f;
+float g_fMoonRotation = 0.0f;
+
 //To calculate the amount of time elapsed between frames
 std::clock_t g_PreviousTicks;
 std::clock_t g_CurrentTicks;
@@ -33,6 +45,27 @@ std::clock_t g_CurrentTicks;
 Camera g_Camera;
 glm::vec3 g_InitialCameraPosition;
 glm::quat g_InitialCameraRotation;
+
+// Model, View, Projection matrix uniform variable in shader program.
+GLint g_uniformMVP = -1;
+GLint g_uniformModelMatrix = -1;
+GLint g_uniformEyePosW = -1;
+
+GLint g_uniformColor = -1;
+
+// Light uniform variables.
+GLint g_uniformLightPosW = -1;
+GLint g_uniformLightColor = -1;
+GLint g_uniformAmbient = -1;
+
+// Material properties.
+GLint g_uniformMaterialEmissive = -1;
+GLint g_uniformMaterialDiffuse = -1;
+GLint g_uniformMaterialSpecular = -1;
+GLint g_uniformMaterialShininess = -1;
+
+GLuint g_EarthTexture = 0;
+GLuint g_MoonTexture = 0;
 
 //Define Geometry of the object. Can be done with a model loader (not in this project). It will be done in-line using static arrays
 
@@ -81,22 +114,19 @@ GLuint g_TexturedLitShaderProgram = 2;
 
 // Model, View, Projection matrix uniform variable in shader program.
 // The MVP acronym suggests that the shader variable defines the concatentated model-view-projection matrix that is used to transform the cube’s vertices into clip-space 
-GLint g_uniformColor = -1;
+//GLint g_uniformColor = -1;
 
 //Uniform attributes for the TexturedLit shader
-GLint g_uniformMVP = -2;
-GLint g_uniformModelMatrix = -3;
-GLint g_uniformEyePosW = -4;
-GLint g_uniformLightPosW = -5;
-GLint g_uniformLightColor = -6;
-GLint g_uniformAmbient = -7;
-GLint g_uniformMaterialEmissive = -8;
-GLint g_uniformMaterialDiffuse = -9;
-GLint g_uniformMaterialSpecular = -10;
-GLint g_uniformMaterialShininess = -11;
-
-float g_fSunRotation = 5.0f;
-float g_fEarthRotation = 3.0f;
+//GLint g_uniformMVP = -2;
+//GLint g_uniformModelMatrix = -3;
+//GLint g_uniformEyePosW = -4;
+//GLint g_uniformLightPosW = -5;
+//GLint g_uniformLightColor = -6;
+//GLint g_uniformAmbient = -7;
+//GLint g_uniformMaterialEmissive = -8;
+//GLint g_uniformMaterialDiffuse = -9;
+//GLint g_uniformMaterialSpecular = -10;
+//GLint g_uniformMaterialShininess = -11;
 
 
 //Functions used as callbacks for window events
@@ -306,13 +336,6 @@ GLuint LoadTexture(const std::string& file)
 	return textureID;
 }
 
-//Attribute Constants matching the layout location in the vertex shader
-const int POSITION_ATTRIBUTE = 0;
-const int NORMAL_ATTRIBUTE = 2;
-const int TEXCOORD0_ATTRIBUTE = 8;
-
-GLuint g_EarthTexture = 0;
-GLuint g_MoonTexture = 1;
 
 //Since all of the objects in our scene (the earth, the moon, and the sun) can all be represented 
 //by a sphere, we will generate a single sphere using a Vertex Array Object and use it to render each 
@@ -449,8 +472,8 @@ int main(int argc, char* argv[])
 	InitGLEW();
 
 	//Load the textures
-	g_EarthTexture = LoadTexture("../data/Textures/earth.jpg");
-	g_MoonTexture = LoadTexture("../data/Textures/moon.jpg");
+	g_EarthTexture = LoadTexture("../data/Textures/earth.dds");
+	g_MoonTexture = LoadTexture("../data/Textures/moon.dds");
 
 	//Load the simple basic shaders
 	GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, "../data/simpleShader.vert");
@@ -734,6 +757,20 @@ void IdleGL()
 	}
 
 	g_Camera.Translate(glm::vec3(g_D - g_A, g_Q - g_E, g_S - g_W) * cameraSpeed * fDeltaTime); //the camera is translated based on the keys that are pressed
+
+	// Rate of rotation in (degrees) per second
+	const float fRotationRate1 = 5.0f;
+	const float fRotationRate2 = 12.5f;
+	const float fRotationRate3 = 20.0f;
+
+	g_fEarthRotation += fRotationRate1 * fDeltaTime;
+	g_fEarthRotation = fmod(g_fEarthRotation, 360.0f);
+
+	g_fMoonRotation += fRotationRate2 * fDeltaTime;
+	g_fMoonRotation = fmod(g_fMoonRotation, 360.0f);
+
+	g_fSunRotation += fRotationRate3 * fDeltaTime;
+	g_fSunRotation = fmod(g_fSunRotation, 360.0f);
 
 	glutPostRedisplay(); //function will ensure the screen is redrawn.
 

@@ -41,7 +41,6 @@ PFNGLGETSTRINGIPROC glGetStringi = NULL;
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 /*	error reporting	*/
 char *result_string_pointer = "SOIL initialized";

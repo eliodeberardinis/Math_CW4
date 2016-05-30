@@ -21,7 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\lib"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
@@ -64,7 +64,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)d.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -84,7 +83,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\lib"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
@@ -276,19 +275,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\image_DXT.cpp"
+				RelativePath="..\..\src\image_DXT.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\image_helper.cpp"
+				RelativePath="..\..\src\image_helper.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SOIL.cpp"
+				RelativePath="..\..\src\SOIL.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stb_image_aug.cpp"
+				RelativePath="..\..\src\stb_image_aug.c"
 				>
 			</File>
 		</Filter>

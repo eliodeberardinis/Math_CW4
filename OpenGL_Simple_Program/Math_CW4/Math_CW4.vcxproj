@@ -134,8 +134,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>.\inc;..\extern\SOIL\src;..\extern\freeglut-2.8.1\include;..\extern\glew-1.13.0\include;..\extern\glm-0.9.7.5</AdditionalIncludeDirectories>
-      <RuntimeLibrary>
-      </RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
