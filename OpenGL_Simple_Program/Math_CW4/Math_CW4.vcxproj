@@ -93,7 +93,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\inc;..\extern\freeglut-2.8.1\include;..\extern\glew-1.13.0\include;..\extern\glm-0.9.7.5</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\inc;..\extern\SOIL\src;..\extern\freeglut-2.8.1\include;..\extern\glew-1.13.0\include;..\extern\glm-0.9.7.5</AdditionalIncludeDirectories>
       <CallingConvention>Cdecl</CallingConvention>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -104,9 +104,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\extern\freeglut-2.8.1\lib\x86\Debug;..\extern\glew-1.13.0\lib\Debug\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\SOIL\lib;..\extern\freeglut-2.8.1\lib\x86\Debug;..\extern\glew-1.13.0\lib\Debug\Win32</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrtd.lib</IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>glew32sd.lib;freeglut_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SOILd.lib;glew32sd.lib;freeglut_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -133,7 +133,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\inc;..\extern\freeglut-2.8.1\include;..\extern\glew-1.13.0\include;..\extern\glm-0.9.7.5</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\inc;..\extern\SOIL\src;..\extern\freeglut-2.8.1\include;..\extern\glew-1.13.0\include;..\extern\glm-0.9.7.5</AdditionalIncludeDirectories>
       <RuntimeLibrary>
       </RuntimeLibrary>
       <OmitDefaultLibName>false</OmitDefaultLibName>
@@ -144,8 +144,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\extern\freeglut-2.8.1\lib\x86;..\extern\glew-1.13.0\lib\Release\Win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;freeglut_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\extern\SOIL\lib;..\extern\freeglut-2.8.1\lib\x86;..\extern\glew-1.13.0\lib\Release\Win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SOIL.lib;glew32s.lib;freeglut_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib; msvcrtd.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -178,6 +178,8 @@
   <ItemGroup>
     <None Include="data\simpleShader.frag" />
     <None Include="data\simpleShader.vert" />
+    <None Include="data\TexturedLit.frag" />
+    <None Include="data\TexturedLit.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

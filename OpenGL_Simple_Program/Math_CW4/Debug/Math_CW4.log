@@ -1,16 +1,56 @@
-﻿Build started 29/5/2016 6:33:01 PM.
+﻿Build started 30/5/2016 1:07:05 AM.
      1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\inc /I"..\extern\freeglut-2.8.1\include" /I"..\extern\glew-1.13.0\include" /I"..\extern\glm-0.9.7.5" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Camera.cpp main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\inc /I..\extern\SOIL\src /I"..\extern\freeglut-2.8.1\include" /I"..\extern\glew-1.13.0\include" /I"..\extern\glm-0.9.7.5" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Camera.cpp main.cpp
          main.cpp
          Camera.cpp
          Generating Code...
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\bin\Math_CW4d.exe" /INCREMENTAL /NOLOGO /LIBPATH:"..\extern\freeglut-2.8.1\lib\x86\Debug" /LIBPATH:"..\extern\glew-1.13.0\lib\Debug\Win32" glew32sd.lib freeglut_static.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:msvcrtd.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:".\bin\Math_CW4d.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\bin\Math_CW4d.lib" /MACHINE:X86 Debug\Camera.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\bin\Math_CW4d.exe" /INCREMENTAL /NOLOGO /LIBPATH:..\extern\SOIL\lib /LIBPATH:"..\extern\freeglut-2.8.1\lib\x86\Debug" /LIBPATH:"..\extern\glew-1.13.0\lib\Debug\Win32" SOILd.lib glew32sd.lib freeglut_static.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:msvcrtd.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:".\bin\Math_CW4d.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\bin\Math_CW4d.lib" /MACHINE:X86 Debug\Camera.obj
          Debug\main.obj
-         Math_CW4.vcxproj -> C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\.\bin\Math_CW4d.exe
-     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" (Rebuild target(s)).
+     1>SOILd.lib(SOIL.obj) : error LNK2038: mismatch detected for 'RuntimeLibrary': value 'MDd_DynamicDebug' doesn't match value 'MTd_StaticDebug' in Camera.obj
+     1>msvcprtd.lib(MSVCP140D.dll) : error LNK2005: "public: __thiscall std::_Lockit::_Lockit(int)" (??0_Lockit@std@@QAE@H@Z) already defined in libcpmtd.lib(xlock.obj)
+     1>msvcprtd.lib(MSVCP140D.dll) : error LNK2005: "public: __thiscall std::_Lockit::~_Lockit(void)" (??1_Lockit@std@@QAE@XZ) already defined in libcpmtd.lib(xlock.obj)
+     1>msvcprtd.lib(MSVCP140D.dll) : error LNK2005: "void __cdecl std::_Debug_message(wchar_t const *,wchar_t const *,unsigned int)" (?_Debug_message@std@@YAXPB_W0I@Z) already defined in libcpmtd.lib(stdthrow.obj)
+     1>msvcprtd.lib(MSVCP140D.dll) : error LNK2005: "void __cdecl std::_Xbad_alloc(void)" (?_Xbad_alloc@std@@YAXXZ) already defined in libcpmtd.lib(xthrow.obj)
+     1>msvcprtd.lib(MSVCP140D.dll) : error LNK2005: "void __cdecl std::_Xlength_error(char const *)" (?_Xlength_error@std@@YAXPBD@Z) already defined in libcpmtd.lib(xthrow.obj)
+     1>msvcprtd.lib(MSVCP140D.dll) : error LNK2005: "void __cdecl std::_Xout_of_range(char const *)" (?_Xout_of_range@std@@YAXPBD@Z) already defined in libcpmtd.lib(xthrow.obj)
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol __invalid_parameter imported in function "char * __cdecl std::_Allocate<char>(unsigned int,char *,bool)" (??$_Allocate@D@std@@YAPADIPAD_N@Z)
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _memchr imported in function "public: static char const * __cdecl std::char_traits<char>::find(char const *,unsigned int,char const &)" (?find@?$char_traits@D@std@@SAPBDPBDIABD@Z)
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _memmove imported in function "public: static char * __cdecl std::char_traits<char>::move(char *,char const *,unsigned int)" (?move@?$char_traits@D@std@@SAPADPADPBDI@Z)
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _strstr imported in function "int __cdecl query_DXT_capability(void)" (?query_DXT_capability@@YAHXZ)
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _fclose imported in function "unsigned int __cdecl SOIL_direct_load_DDS(char const *,unsigned int,int,int)" (?SOIL_direct_load_DDS@@YAIPBDIHH@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4049: locally defined symbol _fclose imported
+     1>SOILd.lib(image_DXT.obj) : warning LNK4049: locally defined symbol _fclose imported
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _fopen imported in function "unsigned int __cdecl SOIL_direct_load_DDS(char const *,unsigned int,int,int)" (?SOIL_direct_load_DDS@@YAIPBDIHH@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4049: locally defined symbol _fopen imported
+     1>SOILd.lib(image_DXT.obj) : warning LNK4049: locally defined symbol _fopen imported
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _fseek imported in function "unsigned int __cdecl SOIL_direct_load_DDS(char const *,unsigned int,int,int)" (?SOIL_direct_load_DDS@@YAIPBDIHH@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4049: locally defined symbol _fseek imported
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _ftell imported in function "unsigned int __cdecl SOIL_direct_load_DDS(char const *,unsigned int,int,int)" (?SOIL_direct_load_DDS@@YAIPBDIHH@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4049: locally defined symbol _ftell imported
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _free imported in function _SOIL_free_image_data
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4049: locally defined symbol _free imported
+     1>SOILd.lib(image_DXT.obj) : warning LNK4049: locally defined symbol _free imported
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol _malloc imported in function "unsigned int __cdecl SOIL_direct_load_DDS(char const *,unsigned int,int,int)" (?SOIL_direct_load_DDS@@YAIPBDIHH@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4049: locally defined symbol _malloc imported
+     1>SOILd.lib(image_DXT.obj) : warning LNK4049: locally defined symbol _malloc imported
+     1>SOILd.lib(SOIL.obj) : warning LNK4217: locally defined symbol __CrtDbgReportW imported in function "char * __cdecl std::_Allocate<char>(unsigned int,char *,bool)" (??$_Allocate@D@std@@YAPADIPAD_N@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4217: locally defined symbol _fgetc imported in function "int __cdecl get8(struct stbi *)" (?get8@@YAHPAUstbi@@@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4217: locally defined symbol _fwrite imported in function "void __cdecl write8(struct _iobuf *,int)" (?write8@@YAXPAU_iobuf@@H@Z)
+     1>SOILd.lib(image_DXT.obj) : warning LNK4049: locally defined symbol _fwrite imported
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4217: locally defined symbol _ldexp imported in function "void __cdecl hdr_convert(float *,unsigned char *,int)" (?hdr_convert@@YAXPAMPAEH@Z)
+     1>SOILd.lib(image_helper.obj) : warning LNK4049: locally defined symbol _ldexp imported
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4217: locally defined symbol _strncmp imported in function "float * __cdecl hdr_load(struct stbi *,int *,int *,int *,int)" (?hdr_load@@YAPAMPAUstbi@@PAH11H@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4217: locally defined symbol _strtol imported in function "float * __cdecl hdr_load(struct stbi *,int *,int *,int *,int)" (?hdr_load@@YAPAMPAUstbi@@PAH11H@Z)
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4217: locally defined symbol __wassert imported in function "int __cdecl bit_reverse(int,int)" (?bit_reverse@@YAHHH@Z)
+     1>SOILd.lib(SOIL.obj) : error LNK2019: unresolved external symbol __imp__fread referenced in function "unsigned int __cdecl SOIL_direct_load_DDS(char const *,unsigned int,int,int)" (?SOIL_direct_load_DDS@@YAIPBDIHH@Z)
+     1>SOILd.lib(stb_image_aug.obj) : error LNK2001: unresolved external symbol __imp__fread
+     1>SOILd.lib(stb_image_aug.obj) : error LNK2019: unresolved external symbol __imp__feof referenced in function "int __cdecl at_eof(struct stbi *)" (?at_eof@@YAHPAUstbi@@@Z)
+     1>SOILd.lib(stb_image_aug.obj) : error LNK2019: unresolved external symbol __imp__realloc referenced in function "int __cdecl expand(struct zbuf *,int)" (?expand@@YAHPAUzbuf@@H@Z)
+     1>.\bin\Math_CW4d.exe : fatal error LNK1120: 3 unresolved externals
+     1>Done Building Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\Math_CW4\Math_CW4.vcxproj" (Rebuild target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:04.20
+Time Elapsed 00:00:02.62
