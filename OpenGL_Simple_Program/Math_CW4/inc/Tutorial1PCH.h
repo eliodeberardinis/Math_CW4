@@ -18,10 +18,13 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+
 //Soil
 #include <SOIL.h>
-#include <image_DXT.h>
-#include <image_helper.h>
-#include <stb_image_aug.h>
-#include <stbi_DDS_aug.h>
+//#include <image_DXT.h>
+//#include <image_helper.h>
+//#include <stb_image_aug.h>
+//#include <stbi_DDS_aug.h>
 //#include <stbi_DDS_aug_c.h>
+
+

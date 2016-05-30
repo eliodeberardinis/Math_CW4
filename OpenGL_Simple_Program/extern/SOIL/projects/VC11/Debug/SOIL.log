@@ -1,4 +1,4 @@
-﻿Build started 30/5/2016 1:06:57 AM.
+﻿Build started 30/5/2016 11:59:03 PM.
      1>Project "C:\Users\Elio\Desktop\Math_CW4\Math_CW4\OpenGL_Simple_Program\extern\SOIL\projects\VC11\SOIL.vcxproj" on node 4 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\SOIL.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\image_DXT.cpp ..\..\src\image_helper.cpp ..\..\src\SOIL.cpp ..\..\src\stb_image_aug.cpp
@@ -53,4 +53,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.46
+Time Elapsed 00:00:02.24
