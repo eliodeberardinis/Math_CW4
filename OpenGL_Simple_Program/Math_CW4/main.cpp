@@ -14,9 +14,8 @@
 #define MEMBER_OFFSET(s,m) ((char*)NULL + (offsetof(s,m)))
 
 //Global variables used in our application
-
 //Variable that decides which project to draw
-int x = 1;
+int ModelType = 1;
 
 //Height, width and ID of the window
 int g_iWindowWidth = 1280;
@@ -40,6 +39,7 @@ float g_fSunRotation = 0.0f;
 float g_fEarthRotation = 0.0f;
 float g_fEarthRotation2 = 0.0f;
 float g_fMoonRotation = 0.0f;
+float g_fMoonRotation2 = 0.0f;
 
 //To calculate the amount of time elapsed between frames
 std::clock_t g_PreviousTicks;
@@ -50,8 +50,7 @@ Camera g_Camera;
 glm::vec3 g_InitialCameraPosition;
 glm::quat g_InitialCameraRotation;
 
-// Vertex array object for the cube and Sphere. 
-//GLuint g_vaoCube = 0; //Used to refer to the Vertex array object used to render our cube. It binds all the vertex attributes and and the index buffer into a single argument (Cube)
+// Vertex array object for the Sphere. 
 GLuint g_vaoSphere = 0; //The VAO object for the sphere
 
 //Reference to the compiled and linked shader program. The shader program combines both vertex and fragment shader into a single program that after compilation can be run on the GPU. (Sphere)
@@ -79,49 +78,11 @@ GLint g_uniformMaterialShininess = -1;
 GLuint g_EarthTexture = 0;
 GLuint g_MoonTexture = 0;
 GLuint g_StarsTextures = 0;
-
-//Define Geometry of the object. Can be done with a model loader (not in this project). It will be done in-line using static arrays
-
-//Creation of a single vertex: Position and color (Vec3) (CUBE EXAMPLE)
-struct VertexXYZColor
-{
-	glm::vec3 m_Pos; //x,y,z position of the vertex
-	glm::vec3 m_Color; //RGB values NO Alpha
-};
-
-// Define the 8 vertices of a unit cube. The order of vertices in the vertex array is arbitrary (CUBE EXAMPLE)
-VertexXYZColor g_Vertices[8] = {
-	{ glm::vec3(1,  1,  1), glm::vec3(1, 1, 1) },  // 0
-	{ glm::vec3(-1,  1,  1), glm::vec3(0, 1, 1) }, // 1
-	{ glm::vec3(-1, -1,  1), glm::vec3(0, 0, 1) }, // 2
-	{ glm::vec3(1, -1,  1), glm::vec3(1, 0, 1) },  // 3
-	{ glm::vec3(1, -1, -1), glm::vec3(1, 0, 0) },  // 4
-	{ glm::vec3(-1, -1, -1), glm::vec3(0, 0, 0) }, // 5
-	{ glm::vec3(-1,  1, -1), glm::vec3(0, 1, 0) }, // 6
-	{ glm::vec3(1,  1, -1), glm::vec3(1, 1, 0) },  // 7
-};
-
-//The order to send the vertices to the GPU is determined by the index buffer
-// Define the vertex indices for the cube.
-// Each set of 6 vertices represents a set of triangles in 
-// counter-clockwise winding order.
-//(CUBE)
-GLuint g_Indices[36] = {
-	0, 1, 2, 2, 3, 0,           // Front face
-	7, 4, 5, 5, 6, 7,           // Back face
-	6, 5, 2, 2, 1, 6,           // Left face
-	7, 0, 3, 3, 4, 7,           // Right face
-	7, 6, 1, 1, 0, 7,           // Top face
-	3, 2, 5, 5, 4, 3            // Bottom face
-};
-
-//Handles to the objects created by OpenGL
-
-
-// Model, View, Projection matrix uniform variable in shader program.
-// The MVP acronym suggests that the shader variable defines the concatentated model-view-projection matrix that is used to transform the cube’s vertices into clip-space 
-//GLint g_uniformColor = -1;
-
+GLuint g_SunTexture = 0;
+GLuint g_VenusTexture = 0;
+GLuint g_MarsTexture = 0;
+GLuint g_JupiterTexture = 0;
+GLuint g_NeptuneTexture = 0;
 
 //Functions used as callbacks for window events
 void IdleGL();                                     // called whenever no other windowing events need to be handled. We can use this function to update the “game” logic.
@@ -178,7 +139,7 @@ void InitGL(int argc, char* argv[])
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
+	
 	std::cout << "Initialize OpenGL Success!" << std::endl;
 }
 
@@ -312,7 +273,6 @@ GLuint CreateShaderProgram(std::vector<GLuint> shaders)
 
 	return program;
 }
-
 
 
 //The SOIL_load_OGL_texture method can be used to load a texture and generate an OpenGL texture object that can then be used to texture the objects in our scene.
@@ -470,8 +430,16 @@ int main(int argc, char* argv[])
 	//Load the textures
 	g_EarthTexture = LoadTexture("../data/Textures/earth.dds");
 	g_MoonTexture = LoadTexture("../data/Textures/moon.dds");
-	g_StarsTextures = LoadTexture("../data/Textures/starfield.dds");
 
+	g_SunTexture = LoadTexture("../data/Textures/Sun.dds"); 
+	g_VenusTexture = LoadTexture("../data/Textures/Venus.dds");
+	g_MarsTexture = LoadTexture("../data/Textures/Mars.dds");
+	g_JupiterTexture = LoadTexture("../data/Textures/Jupiter.dds");
+	g_NeptuneTexture = LoadTexture("../data/Textures/Neptune.dds");
+
+	g_StarsTextures = LoadTexture("../data/Textures/starfield2.png");
+
+	
 	//Load the simple basic shaders
 	GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, "../data/simpleShader.vert");
 	GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, "../data/simpleShader.frag");
@@ -519,64 +487,6 @@ int main(int argc, char* argv[])
 	glutMainLoop();
 }
 
-	//----------------FROM HERE USE FOR THE CUBE EXAMPLE---------------------//
-
-	//// Load some shaders.
-	//GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, "../data/simpleShader.vert");
-	//GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, "../data/simpleShader.frag");
-
-	//std::vector<GLuint> shaders;
-	//shaders.push_back(vertexShader);
-	//shaders.push_back(fragmentShader);
-
-	//// Create the shader program.
-	//g_SimpleShaderProgram = CreateShaderProgram(shaders);
-	//assert(g_SimpleShaderProgram != 0);
-
-	////if we change the shader program then the attribute locations may change. It is also possible that the linker optimizes unused attributes and uniform variables away if they are not being used anywhere in the final program so it is always a good idea to explicitly request the attribute locations after the shader program has been linked.
-	//GLint positionAtribID = glGetAttribLocation(g_SimpleShaderProgram, "in_position");
-	//GLint colorAtribID = glGetAttribLocation(g_SimpleShaderProgram, "in_color");
-	//g_uniformColor = glGetUniformLocation(g_SimpleShaderProgram, "color");
-
-	//// Create a VAO for the cube.First we create a new VAO and bind it to make it active.
-	//glGenVertexArrays(1, &g_vaoCube);
-	//glBindVertexArray(g_vaoCube);
-
-	////Next, we’ll create two Vertex Buffer Objects (VBO), one for the vertex data, and another for the index data.
-	//GLuint vertexBuffer, indexBuffer;
-	//glGenBuffers(1, &vertexBuffer);
-	//glGenBuffers(1, &indexBuffer);
-
-	////Then we need to bind the buffers and populate them with the vertex data.
-	//glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(g_Vertices), g_Vertices, GL_STATIC_DRAW);
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_Indices), g_Indices, GL_STATIC_DRAW);
-
-	////After we have copied the model data to the VBOs, we need to specify which attributes are mapped 
-	////to which parts of the VBO. We must specify that the position data in the VBO stream maps to attribute 
-	////location 0 and the color data in the VBO stream maps to attribute location 1.
-
-	//glVertexAttribPointer(positionAtribID, 3, GL_FLOAT, false, sizeof(VertexXYZColor), MEMBER_OFFSET(VertexXYZColor, m_Pos));
-	//glEnableVertexAttribArray(positionAtribID);
-
-	//glVertexAttribPointer(colorAtribID, 3, GL_FLOAT, false, sizeof(VertexXYZColor), MEMBER_OFFSET(VertexXYZColor, m_Color)); //The glVertexAttribPointer function allows us to map arbitrary vertex attributes to arbitrary attribute locations
-	//glEnableVertexAttribArray(colorAtribID); //In order for the vertex attributes to be activated in the VAO, we must enable them using the glEnableVertexAttribArray function passing the generic vertex attribute location as the only parameter.
-
-	//// Make sure we disable and unbind everything to prevent rendering issues later. we can unbind and disable any states that we have activated during the initialization
-	//glBindVertexArray(0); //We unbind the currently active VAO and VBO’s by activating the default VAO and VBO 0. This is equivalent to “disabling” the VAO and VBO’s.
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//glDisableVertexAttribArray(positionAtribID); //We should also disable the generic vertex attributes that were enabled while setting up the VAO.
-	//glDisableVertexAttribArray(colorAtribID);
-
-	////Kick off the game loop
-	//glutMainLoop();
-//}
-
-	////---------END OF CODE FOR CUBE EXAMPLE------------//
-
 
 //Whenever the render window is resized (or sized for the first time when it is 
 //created before the first draw call is invoked) the ReshapeGL callback function will be invoked.
@@ -593,7 +503,7 @@ void ReshapeGL(int w, int h)
 	g_iWindowHeight = h;
 
 	g_Camera.SetViewport(0, 0, w, h);
-	g_Camera.SetProjectionRH(30.0f, w / (float)h, 0.1f, 200.0f); //the camera’s projection matrix is initialized with a 60 degree field-of-view, an aspect ratio that matches the aspect ratio of the window, a near clipping plane of 0.1 units and a far clipping plane of 100 units
+	g_Camera.SetProjectionRH(30.0f, w / (float)h, 0.1f, 2000.0f); //the camera’s projection matrix is initialized with a 60 degree field-of-view, an aspect ratio that matches the aspect ratio of the window, a near clipping plane of 0.1 units and a far clipping plane of 100 units
 
 	glutPostRedisplay(); //tells GLUT to add a PAINT event to the current window’s event queue. This will cause the scene to get redrawn.
 }
@@ -616,11 +526,9 @@ void ReshapeGL(int w, int h)
 //The final object will be the moon.The moon appears to rotate around the earth but at a distance of 60, 000 Km 
 //away from the earth.
 
-
-//EARTH-MOON VERSION
 void DisplayGL()
 {
-	if (x == 0) {
+	if (ModelType == 0) {
 		//In the first part of the render function, we will create a sphere VAO that 
 		//can be used to render the sun, earth, and moon.
 
@@ -689,7 +597,7 @@ void DisplayGL()
 		// Draw the moon.
 		glBindTexture(GL_TEXTURE_2D, g_MoonTexture);
 
-		modelMatrix = glm::rotate(glm::radians(g_fSunRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::scale(glm::vec3(3.476f));
+		modelMatrix = glm::rotate(glm::radians(g_fMoonRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::scale(glm::vec3(3.476f));
 		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
 
 		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -703,27 +611,7 @@ void DisplayGL()
 
 		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
-
-		// Draw the Stars. (NOT WORKING to create stars in a unit sphere around the camera)
-		//glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
-
-		//modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::translate(g_Camera.GetPosition());
-		//mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
-
-		//glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
-		//glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-
-		//glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
-		//glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
-		//glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
-		//glUniform1f(g_uniformMaterialShininess, 50.0f);
-
-		//
-		//glFrontFace(GL_CW);
-		//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-		//glFrontFace(GL_CCW);
-
-		// Draw the Stars. (WORKING: Stars in a Big sphere around everything)
+		// Draw the Stars.
 		glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
 
 		modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(100.0f));
@@ -735,7 +623,7 @@ void DisplayGL()
 		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(white));
 		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(black));
 		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(black));
-		glUniform1f(g_uniformMaterialShininess, 0.0f);
+		glUniform1f(g_uniformMaterialShininess, 0.1f);
 
 		//glDisable(GL_CULL_FACE);//Alternative method to see the inside of the sphere with the stars
 		glFrontFace(GL_CW);
@@ -782,16 +670,42 @@ void DisplayGL()
 		const glm::vec4 ambient(0.1f, 0.1f, 0.1f, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		
 		// Draw the sun using the simple shader
 		glBindVertexArray(g_vaoSphere);
+		
 
 		glUseProgram(g_SimpleShaderProgram);
-		glm::mat4 modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, -1, 0)) * glm::scale(glm::vec3(12.756f));
-		glm::mat4 mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+		glm::mat4 modelMatrixSun = glm::rotate(glm::radians(0.0f), glm::vec3(0, -1, 0)) * glm::scale(glm::vec3(12.756f));
+		glm::mat4 mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrixSun;
 		GLuint uniformMVP = glGetUniformLocation(g_SimpleShaderProgram, "MVP");
 		glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
 		glUniform4fv(g_uniformColor, 1, glm::value_ptr(white));
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		//Draw the sun with textures
+		glBindTexture(GL_TEXTURE_2D, g_SunTexture);
+		glUseProgram(g_TexturedLitShaderProgram);
+
+		// Set the light position to the position of the Sun.
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrixSun[3]));
+		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
+
+		glm::mat4 modelMatrix = glm::rotate(glm::radians(g_fEarthRotation), glm::vec3(0, -1, 0)) * glm::scale(glm::vec3(13.0f));
+		glm::vec4 eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
+
+		// Material properties.
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 50.0f);
 
 		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
@@ -801,12 +715,12 @@ void DisplayGL()
 		glUseProgram(g_TexturedLitShaderProgram);
 
 		// Set the light position to the position of the Sun.
-		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrix[3]));
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrixSun[3]));
 		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
 		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
 
 		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::rotate(glm::radians(g_fEarthRotation2), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(3.476f));
-		glm::vec4 eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
 		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
 
 		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -822,21 +736,141 @@ void DisplayGL()
 		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		//// Draw the moon.
-		//glBindTexture(GL_TEXTURE_2D, g_MoonTexture);
+		glBindTexture(GL_TEXTURE_2D, g_MoonTexture);
 
-		//modelMatrix = glm::rotate(glm::radians(g_fSunRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::scale(glm::vec3(3.476f));
-		//mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::rotate(glm::radians(g_fMoonRotation2), glm::vec3(0, -1, 0))* glm::translate(glm::vec3(8, 0, 0));
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
 
-		//glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
-		//glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-		//glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
-		//glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
-		//glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
-		//glUniform1f(g_uniformMaterialShininess, 5.0f);
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 5.0f);
 
 
-		//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		// Draw Venus.
+		glBindTexture(GL_TEXTURE_2D, g_VenusTexture);
+		glUseProgram(g_TexturedLitShaderProgram);
+
+		// Set the light position to the position of the Sun.
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrixSun[3]));
+		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
+
+		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation*1.3f), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(30, 0, 0)) * glm::rotate(glm::radians(g_fEarthRotation2), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(2.0f));
+		eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
+
+		// Material properties.
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 50.0f);
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		// Draw Mars.
+		glBindTexture(GL_TEXTURE_2D, g_MarsTexture);
+		glUseProgram(g_TexturedLitShaderProgram);
+
+		// Set the light position to the position of the Sun.
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrixSun[3]));
+		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
+
+		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation*0.8f), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(75, 0, 0)) * glm::rotate(glm::radians(g_fEarthRotation2), glm::vec3(0, -1, 0)) * glm::scale(glm::vec3(2.5f));
+		eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
+
+		// Material properties.
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 50.0f);
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		// Draw Jupiter.
+		glBindTexture(GL_TEXTURE_2D, g_JupiterTexture);
+		glUseProgram(g_TexturedLitShaderProgram);
+
+		// Set the light position to the position of the Sun.
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrixSun[3]));
+		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
+
+		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation*1.5f), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(100, 0, 0)) * glm::rotate(glm::radians(g_fEarthRotation2), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(5.0f));
+		eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
+
+		// Material properties.
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 50.0f);
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		// Draw Neptune.
+		glBindTexture(GL_TEXTURE_2D, g_NeptuneTexture);
+		glUseProgram(g_TexturedLitShaderProgram);
+
+		// Set the light position to the position of the Sun.
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrixSun[3]));
+		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
+
+		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation*1.3f), glm::vec3(0, -1, 0)) * glm::translate(glm::vec3(130, 0, 0)) * glm::rotate(glm::radians(g_fEarthRotation2*1.2f), glm::vec3(0, -1, 0)) * glm::scale(glm::vec3(4.2f));
+		eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
+
+		// Material properties.
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 50.0f);
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		// Draw the Stars. (WORKING: Stars in a Big sphere around everything)
+		glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
+
+		modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(250.0f));
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix; //Transforms vertices into clip space
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(black));
+		glUniform1f(g_uniformMaterialShininess, 0.1f);
+
+		//glDisable(GL_CULL_FACE);//Alternative method to see the inside of the sphere with the stars
+		glFrontFace(GL_CW);
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		glFrontFace(GL_CCW);
+		//glEnable(GL_CULL_FACE);
 
 		//The VAO, shader program, and texture should be unbound so that we leave the OpenGL 
 		//state machine the way we found it.
@@ -849,25 +883,6 @@ void DisplayGL()
 
 	}
 }
-
-//(CUBE VERSION)
-//void DisplayGL()
-//{
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//	glBindVertexArray(g_vaoCube);
-//	glUseProgram(g_SimpleShaderProgram);
-//
-//	glm::mat4 mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * glm::toMat4(g_Rotation);
-//	glUniformMatrix4fv(g_uniformColor, 1, GL_FALSE, glm::value_ptr(mvp));
-//
-//	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, BUFFER_OFFSET(0)); // kick off all of those vertices down the rendering pipeline.
-//
-//	glUseProgram(0);
-//	glBindVertexArray(0);
-//
-//	glutSwapBuffers();
-//}
 
 //Idle function
 //The IdleGL function will run whenever no other events need to be processed on the 
@@ -894,12 +909,14 @@ void IdleGL()
 	}
 
 	g_Camera.Translate(glm::vec3(g_D - g_A, g_Q - g_E, g_S - g_W) * cameraSpeed * fDeltaTime); //the camera is translated based on the keys that are pressed
+	
 
 	// Rate of rotation in (degrees) per second
 	const float fRotationRate1 = 5.0f;
 	const float fRotationRate2 = 12.5f;
 	const float fRotationRate3 = 20.0f;
 	const float fRotationRate4 = 15.0f;
+	const float fRotationRate5 = 50.0f;
 
 	g_fEarthRotation += fRotationRate1 * fDeltaTime;
 	g_fEarthRotation = fmod(g_fEarthRotation, 360.0f);
@@ -910,12 +927,13 @@ void IdleGL()
 	g_fMoonRotation += fRotationRate2 * fDeltaTime;
 	g_fMoonRotation = fmod(g_fMoonRotation, 360.0f);
 
+	g_fMoonRotation2 += fRotationRate5 * fDeltaTime;
+	g_fMoonRotation2 = fmod(g_fMoonRotation2, 360.0f);
+
 	g_fSunRotation += fRotationRate3 * fDeltaTime;
 	g_fSunRotation = fmod(g_fSunRotation, 360.0f);
 
 	glutPostRedisplay(); //function will ensure the screen is redrawn.
-
-	
 
 }
 
@@ -949,6 +967,12 @@ void KeyboardGL(unsigned char c, int x, int y)
 	case 'E':
 		g_E = 1;
 		break;
+
+	case 32:
+		if (ModelType == 1) {ModelType = 0;}
+		else                { ModelType = 1;}
+		break;
+
 	case 'r':
 	case 'R':
 		g_Camera.SetPosition(g_InitialCameraPosition);
@@ -1048,7 +1072,6 @@ void MotionGL(int x, int y)
 	glm::quat rotY = glm::angleAxis<float>(glm::radians(delta.x) * 0.5f, glm::vec3(0, 1, 0));
 
 	g_Camera.Rotate( rotX * rotY );
-	//g_Rotation = (rotX * rotY) * g_Rotation;
 }
 
 

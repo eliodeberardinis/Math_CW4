@@ -38,12 +38,12 @@ void main()
     vec4 R = reflect( -L, N );
     float RdotV = max( dot( R, V ), 0 ); //Phong
     float NdotH = max( dot( N, H ), 0 ); //Blinn-Phong
-    vec4 Specular = pow( RdotV, MaterialShininess ) * LightColor * MaterialSpecular; //Phong, if you want to try Blinn, replace RdotV with NdotH
+    vec4 Specular = pow( NdotH, MaterialShininess ) * LightColor * MaterialSpecular; //Blinn-Phong, if you want to use Phong replace NdotH with RdotV
      
     out_color = ( Emissive + Ambient + Diffuse + Specular ) * texture( diffuseSampler, v2f_texcoord );
 }
 
-//This shader only computes the lighting contribution of a single light source. If you want to define more 
-//lights, you can simply create a for-loop around the diffuse and specular lighting calculations and change 
+//This shader only computes the lighting contribution of a single light source. to define more 
+//lights, create a for-loop around the diffuse and specular lighting calculations and change 
 //the LightPosW and the LightColor uniform variables to be arrays. The final Diffuse and Specular values will 
 //be the sum of all Diffuse and Specular contributions for all lights in the scene.
