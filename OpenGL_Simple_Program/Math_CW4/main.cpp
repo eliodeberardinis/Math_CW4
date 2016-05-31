@@ -9,7 +9,6 @@
 #define TEXCOORD1_ATTRIBUTE 9
 #define TEXCOORD2_ATTRIBUTE 10
 
-
 //Macros Used for the vertex buffer
 #define BUFFER_OFFSET(offset) ((void*)(offset))
 #define MEMBER_OFFSET(s,m) ((char*)NULL + (offsetof(s,m)))
@@ -17,8 +16,8 @@
 //Global variables used in our application
 
 //Height, width and ID of the window
-int g_iWindowWidth = 800;
-int g_iWindowHeight = 600;
+int g_iWindowWidth = 1280;
+int g_iWindowHeight = 720;
 int g_iWindowHandle = 0;
 
 //Set to 1 if WASD keys are pressed, 0 otherwise
@@ -30,9 +29,10 @@ bool g_bShift = false;
 //Keep track of the mouse position
 glm::ivec2 g_MousePos;
 
-//Store the initial rotation of the object
+//Store the initial rotation of a generic object
 glm::quat g_Rotation;
 
+//rotation values of the bjects on out scene
 float g_fSunRotation = 0.0f;
 float g_fEarthRotation = 0.0f;
 float g_fMoonRotation = 0.0f;
@@ -45,6 +45,14 @@ std::clock_t g_CurrentTicks;
 Camera g_Camera;
 glm::vec3 g_InitialCameraPosition;
 glm::quat g_InitialCameraRotation;
+
+// Vertex array object for the cube and Sphere. 
+//GLuint g_vaoCube = 0; //Used to refer to the Vertex array object used to render our cube. It binds all the vertex attributes and and the index buffer into a single argument (Cube)
+GLuint g_vaoSphere = 0; //The VAO object for the sphere
+
+//Reference to the compiled and linked shader program. The shader program combines both vertex and fragment shader into a single program that after compilation can be run on the GPU. (Sphere)
+GLuint g_SimpleShaderProgram = 0;
+GLuint g_TexturedLitShaderProgram = 0;
 
 // Model, View, Projection matrix uniform variable in shader program.
 GLint g_uniformMVP = -1;
@@ -92,7 +100,7 @@ VertexXYZColor g_Vertices[8] = {
 // Define the vertex indices for the cube.
 // Each set of 6 vertices represents a set of triangles in 
 // counter-clockwise winding order.
-//(CUBE EXAMPLE)
+//(CUBE)
 GLuint g_Indices[36] = {
 	0, 1, 2, 2, 3, 0,           // Front face
 	7, 4, 5, 5, 6, 7,           // Back face
@@ -104,29 +112,10 @@ GLuint g_Indices[36] = {
 
 //Handles to the objects created by OpenGL
 
-// Vertex array object for the cube. (CUBE EXAMPLE)
-GLuint g_vaoCube = 0; //Used to refer to the Vertex array object used to render our cube. It binds all the vertex attributes and and the index buffer into a single argument
-GLuint g_vaoSphere = 0;
-
-//Reference to the compiled and linked shader program. The shader program combines both vertex and fragment shader into a single program that after compilation can be run on the GPU.
-GLuint g_SimpleShaderProgram = 0;   
-GLuint g_TexturedLitShaderProgram = 2;
 
 // Model, View, Projection matrix uniform variable in shader program.
 // The MVP acronym suggests that the shader variable defines the concatentated model-view-projection matrix that is used to transform the cube’s vertices into clip-space 
 //GLint g_uniformColor = -1;
-
-//Uniform attributes for the TexturedLit shader
-//GLint g_uniformMVP = -2;
-//GLint g_uniformModelMatrix = -3;
-//GLint g_uniformEyePosW = -4;
-//GLint g_uniformLightPosW = -5;
-//GLint g_uniformLightColor = -6;
-//GLint g_uniformAmbient = -7;
-//GLint g_uniformMaterialEmissive = -8;
-//GLint g_uniformMaterialDiffuse = -9;
-//GLint g_uniformMaterialSpecular = -10;
-//GLint g_uniformMaterialShininess = -11;
 
 
 //Functions used as callbacks for window events
@@ -251,6 +240,8 @@ GLuint LoadShader(GLenum shaderType, const std::string& shaderFile)
 	// Load the shader source for each shader object.
 	const GLchar* sources[] = { source.c_str() };
 	glShaderSource(shader, 1, sources, NULL);
+
+	//Compile the Shader
 	glCompileShader(shader);
 
 	// Check for compile errors in the shader
@@ -596,7 +587,7 @@ void ReshapeGL(int w, int h)
 	g_iWindowHeight = h;
 
 	g_Camera.SetViewport(0, 0, w, h);
-	g_Camera.SetProjectionRH(60.0f, w / (float)h, 0.1f, 100.0f); //the camera’s projection matrix is initialized with a 60 degree field-of-view, an aspect ratio that matches the aspect ratio of the window, a near clipping plane of 0.1 units and a far clipping plane of 100 units
+	g_Camera.SetProjectionRH(30.0f, w / (float)h, 0.1f, 200.0f); //the camera’s projection matrix is initialized with a 60 degree field-of-view, an aspect ratio that matches the aspect ratio of the window, a near clipping plane of 0.1 units and a far clipping plane of 100 units
 
 	glutPostRedisplay(); //tells GLUT to add a PAINT event to the current window’s event queue. This will cause the scene to get redrawn.
 }
@@ -649,7 +640,7 @@ void DisplayGL()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Draw the sun
+	// Draw the sun using the simple shader
 	glBindVertexArray(g_vaoSphere);
 
 	glUseProgram(g_SimpleShaderProgram);
@@ -812,7 +803,9 @@ void KeyboardGL(unsigned char c, int x, int y)
 	case 'R':
 		g_Camera.SetPosition(g_InitialCameraPosition);
 		g_Camera.SetRotation(g_InitialCameraRotation);
-		g_Rotation = glm::quat();
+		g_fEarthRotation = 0.0f;
+		g_fSunRotation = 0.0f;
+		g_fMoonRotation = 0.0f;
 		break;
 	case 27:
 		glutLeaveMainLoop();
@@ -905,7 +898,7 @@ void MotionGL(int x, int y)
 	glm::quat rotY = glm::angleAxis<float>(glm::radians(delta.x) * 0.5f, glm::vec3(0, 1, 0));
 
 	//g_Camera.Rotate( rotX * rotY );
-	g_Rotation = (rotX * rotY) * g_Rotation;
+	//g_Rotation = (rotX * rotY) * g_Rotation;
 }
 
 
