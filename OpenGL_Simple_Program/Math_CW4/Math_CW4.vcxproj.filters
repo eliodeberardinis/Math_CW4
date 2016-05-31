@@ -46,5 +46,8 @@
     <None Include="data\TexturedLit.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="data\multitexture_frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
