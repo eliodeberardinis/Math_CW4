@@ -175,6 +175,7 @@
     <ClInclude Include="inc\Tutorial1PCH.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\multitexture_frag.glsl" />
     <None Include="data\simpleShader.frag" />
     <None Include="data\simpleShader.vert" />
     <None Include="data\TexturedLit.frag" />

@@ -53,6 +53,9 @@ GLuint g_vaoSphere = 0; //The VAO object for the sphere
 //Reference to the compiled and linked shader program. The shader program combines both vertex and fragment shader into a single program that after compilation can be run on the GPU. (Sphere)
 GLuint g_SimpleShaderProgram = 0;
 GLuint g_TexturedLitShaderProgram = 0;
+//add multitexturedShaderProgram
+GLuint g_MultiTexturedShaderProgram = 0;
+
 
 // Model, View, Projection matrix uniform variable in shader program.
 GLint g_uniformMVP = -1;
@@ -74,6 +77,7 @@ GLint g_uniformMaterialShininess = -1;
 
 GLuint g_EarthTexture = 0;
 GLuint g_MoonTexture = 0;
+GLuint g_NightTexture = 0;
 
 //Define Geometry of the object. Can be done with a model loader (not in this project). It will be done in-line using static arrays
 
@@ -84,7 +88,7 @@ struct VertexXYZColor
 	glm::vec3 m_Color; //RGB values NO Alpha
 };
 
-// Define the 8 vertices of a unit cube. The order of vertices in the vertex array is arbitrary (CUBE EXAMPLE)
+ //Define the 8 vertices of a unit cube. The order of vertices in the vertex array is arbitrary (CUBE EXAMPLE)
 VertexXYZColor g_Vertices[8] = {
 	{ glm::vec3(1,  1,  1), glm::vec3(1, 1, 1) },  // 0
 	{ glm::vec3(-1,  1,  1), glm::vec3(0, 1, 1) }, // 1
@@ -246,7 +250,7 @@ GLuint LoadShader(GLenum shaderType, const std::string& shaderFile)
 
 	// Check for compile errors in the shader
 	GLint compileStatus;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus); //This will tell if the shadr was compiled
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus); //This will tell if the shader was compiled
 	if (compileStatus != GL_TRUE)
 	{
 		GLint logLength;                                        //Check the length of the error log
@@ -465,14 +469,18 @@ int main(int argc, char* argv[])
 	//Load the textures
 	g_EarthTexture = LoadTexture("../data/Textures/earth.dds");
 	g_MoonTexture = LoadTexture("../data/Textures/moon.dds");
+	g_NightTexture = LoadTexture("../data/Textures/night.dds");
 
 	//Load the simple basic shaders
 	GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, "../data/simpleShader.vert");
 	GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, "../data/simpleShader.frag");
+	////add multitexture
+	GLuint multiTexturedShader = LoadShader(GL_FRAGMENT_SHADER, "../data/multitexture_frag.glsl");
 
 	std::vector<GLuint> shaders;
 	shaders.push_back(vertexShader);
 	shaders.push_back(fragmentShader);
+	//shaders.push_back(multiTexturedShader);
 
 	//Create the shader program
 	g_SimpleShaderProgram = CreateShaderProgram(shaders);
@@ -484,11 +492,46 @@ int main(int argc, char* argv[])
 	//Next we’ll load the textureLit vertex and fragment shaders and query for the uniform locations in that shader program.
 	vertexShader = LoadShader(GL_VERTEX_SHADER, "../data/TexturedLit.vert");
 	fragmentShader = LoadShader(GL_FRAGMENT_SHADER, "../data/TexturedLit.frag");
+	//add multitexture
+	hmultiTexturedShader = LoadShader(GL_FRAGMENT_SHADER, "../data/multitexture_frag.glsl");
+
+
+		//multiTexture blending specific below
+		//create multitextured shader programe
+	g_MultiTexturedShaderProgram = CreateShaderProgram(shaders);
+	assert(g_MultiTexturedShaderProgram);
+
+	// Get the locations for the uniform sampler variables defined in the fragment shader.
+	GLint uniformTex0 = glGetUniformLocation(g_MultiTexturedShaderProgram, "tex0");
+	GLint uniformTex1 = glGetUniformLocation(g_MultiTexturedShaderProgram, "tex1");
+
+
+	// Bind the first texture to the first texture unit.
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, g_EarthTexture);
+
+	// Bind the second texture to the second texture unit.
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, g_NightTexture);
+
+
+	// Now bind the uniform samplers to the corresponding texture units.
+	// Note that we must bind the uniform samplers to the texture unit, 
+	// not the texture object ID!
+	glUniform1i(uniformTex0, 0); // Bind the first sampler to texture unit 0.
+	glUniform1i(uniformTex1, 1); // Bind the second sampler to texture unit 1.
+
+
+								 //end of multitexture specific
+
+
+
 
 	shaders.clear();
 
 	shaders.push_back(vertexShader);
 	shaders.push_back(fragmentShader);
+	//shaders.push_back(multiTexturedShader);
 
 	g_TexturedLitShaderProgram = CreateShaderProgram(shaders);
 	assert(g_TexturedLitShaderProgram);
@@ -496,6 +539,8 @@ int main(int argc, char* argv[])
 	g_uniformMVP = glGetUniformLocation(g_TexturedLitShaderProgram, "ModelViewProjectionMatrix");
 	g_uniformModelMatrix = glGetUniformLocation(g_TexturedLitShaderProgram, "ModelMatrix");
 	g_uniformEyePosW = glGetUniformLocation(g_TexturedLitShaderProgram, "EyePosW");
+
+	
 
 	// Light properties.
 	g_uniformLightPosW = glGetUniformLocation(g_TexturedLitShaderProgram, "LightPosW");
@@ -513,63 +558,6 @@ int main(int argc, char* argv[])
 	glutMainLoop();
 }
 
-	//----------------FROM HERE USE FOR THE CUBE EXAMPLE---------------------//
-
-	//// Load some shaders.
-	//GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, "../data/simpleShader.vert");
-	//GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, "../data/simpleShader.frag");
-
-	//std::vector<GLuint> shaders;
-	//shaders.push_back(vertexShader);
-	//shaders.push_back(fragmentShader);
-
-	//// Create the shader program.
-	//g_SimpleShaderProgram = CreateShaderProgram(shaders);
-	//assert(g_SimpleShaderProgram != 0);
-
-	////if we change the shader program then the attribute locations may change. It is also possible that the linker optimizes unused attributes and uniform variables away if they are not being used anywhere in the final program so it is always a good idea to explicitly request the attribute locations after the shader program has been linked.
-	//GLint positionAtribID = glGetAttribLocation(g_SimpleShaderProgram, "in_position");
-	//GLint colorAtribID = glGetAttribLocation(g_SimpleShaderProgram, "in_color");
-	//g_uniformColor = glGetUniformLocation(g_SimpleShaderProgram, "color");
-
-	//// Create a VAO for the cube.First we create a new VAO and bind it to make it active.
-	//glGenVertexArrays(1, &g_vaoCube);
-	//glBindVertexArray(g_vaoCube);
-
-	////Next, we’ll create two Vertex Buffer Objects (VBO), one for the vertex data, and another for the index data.
-	//GLuint vertexBuffer, indexBuffer;
-	//glGenBuffers(1, &vertexBuffer);
-	//glGenBuffers(1, &indexBuffer);
-
-	////Then we need to bind the buffers and populate them with the vertex data.
-	//glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(g_Vertices), g_Vertices, GL_STATIC_DRAW);
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_Indices), g_Indices, GL_STATIC_DRAW);
-
-	////After we have copied the model data to the VBOs, we need to specify which attributes are mapped 
-	////to which parts of the VBO. We must specify that the position data in the VBO stream maps to attribute 
-	////location 0 and the color data in the VBO stream maps to attribute location 1.
-
-	//glVertexAttribPointer(positionAtribID, 3, GL_FLOAT, false, sizeof(VertexXYZColor), MEMBER_OFFSET(VertexXYZColor, m_Pos));
-	//glEnableVertexAttribArray(positionAtribID);
-
-	//glVertexAttribPointer(colorAtribID, 3, GL_FLOAT, false, sizeof(VertexXYZColor), MEMBER_OFFSET(VertexXYZColor, m_Color)); //The glVertexAttribPointer function allows us to map arbitrary vertex attributes to arbitrary attribute locations
-	//glEnableVertexAttribArray(colorAtribID); //In order for the vertex attributes to be activated in the VAO, we must enable them using the glEnableVertexAttribArray function passing the generic vertex attribute location as the only parameter.
-
-	//// Make sure we disable and unbind everything to prevent rendering issues later. we can unbind and disable any states that we have activated during the initialization
-	//glBindVertexArray(0); //We unbind the currently active VAO and VBO’s by activating the default VAO and VBO 0. This is equivalent to “disabling” the VAO and VBO’s.
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//glDisableVertexAttribArray(positionAtribID); //We should also disable the generic vertex attributes that were enabled while setting up the VAO.
-	//glDisableVertexAttribArray(colorAtribID);
-
-	////Kick off the game loop
-	//glutMainLoop();
-//}
-
-	////---------END OF CODE FOR CUBE EXAMPLE------------//
 
 
 //Whenever the render window is resized (or sized for the first time when it is 
@@ -596,10 +584,6 @@ void ReshapeGL(int w, int h)
 //window needs to be redrawn (which is guaranteed to occur whenever the 
 //glutPostRedisplay method is called).
 
-//(For the cube example)
-//If the camera moves or the cube rotates, we need to update the MVP matrix. 
-//We do this by first computing the combined MVP matrix and assigning this MVP matrix 
-//to the uniform variable in the shader using the glUniformMatrix4fv method
 
 //For the Earth example
 //To render this scene, we’ll draw 3 spheres. The first sphere will represent the sun. 
@@ -624,10 +608,6 @@ void DisplayGL()
 		g_vaoSphere = SolidSphere(1, slices, stacks);
 	}
 
-	//If I was ambitious, I would have the SolidSphere function return a sphere 
-	//object that stores the index count, and the ID’s of the internal VBOs that 
-	//are used to store the geometry for the sphere but that is not required for the minimal
-	//implementation here. 
 
 	//The next part of the render function will setup the uniform properties in the shader 
 	//and render the sun, earth, and moon. Let’s first draw the sun using the SimpleShader 
@@ -655,7 +635,9 @@ void DisplayGL()
 	//Next, we will draw the earth.
 	// Draw the earth.
 	glBindTexture(GL_TEXTURE_2D, g_EarthTexture);
-	glUseProgram(g_TexturedLitShaderProgram);
+	glUseProgram(g_TexturedLitShaderProgram); 
+
+
 
 	// Set the light position to the position of the Sun.
 	glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrix[3]));
