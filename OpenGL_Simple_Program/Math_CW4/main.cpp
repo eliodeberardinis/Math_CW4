@@ -15,6 +15,9 @@
 
 //Global variables used in our application
 
+//Variable that decides which project to draw
+int x = 1;
+
 //Height, width and ID of the window
 int g_iWindowWidth = 1280;
 int g_iWindowHeight = 720;
@@ -35,6 +38,7 @@ glm::quat g_Rotation;
 //rotation values of the bjects on out scene
 float g_fSunRotation = 0.0f;
 float g_fEarthRotation = 0.0f;
+float g_fEarthRotation2 = 0.0f;
 float g_fMoonRotation = 0.0f;
 
 //To calculate the amount of time elapsed between frames
@@ -612,140 +616,238 @@ void ReshapeGL(int w, int h)
 //The final object will be the moon.The moon appears to rotate around the earth but at a distance of 60, 000 Km 
 //away from the earth.
 
+
 //EARTH-MOON VERSION
 void DisplayGL()
 {
-	//In the first part of the render function, we will create a sphere VAO that 
-	//can be used to render the sun, earth, and moon.
+	if (x == 0) {
+		//In the first part of the render function, we will create a sphere VAO that 
+		//can be used to render the sun, earth, and moon.
 
-	int slices = 32;
-	int stacks = 32;
-	int numIndicies = (slices * stacks + slices) * 6;
-	if (g_vaoSphere == 0)
-	{
-		g_vaoSphere = SolidSphere(1, slices, stacks);
+		int slices = 32;
+		int stacks = 32;
+		int numIndicies = (slices * stacks + slices) * 6;
+		if (g_vaoSphere == 0)
+		{
+			g_vaoSphere = SolidSphere(1, slices, stacks);
+		}
+
+		//If I was ambitious, I would have the SolidSphere function return a sphere 
+		//object that stores the index count, and the ID’s of the internal VBOs that 
+		//are used to store the geometry for the sphere but that is not required for the minimal
+		//implementation here. 
+
+		//The next part of the render function will setup the uniform properties in the shader 
+		//and render the sun, earth, and moon. Let’s first draw the sun using the SimpleShader 
+		//shader program (since the sun is not textured or lit, we do not need to use the TextureLit 
+		//shader program for this)
+
+		const glm::vec4 white(1);
+		const glm::vec4 black(0);
+		const glm::vec4 ambient(0.1f, 0.1f, 0.1f, 1.0f);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Draw the sun using the simple shader
+		glBindVertexArray(g_vaoSphere);
+
+		glUseProgram(g_SimpleShaderProgram);
+		glm::mat4 modelMatrix = glm::rotate(glm::radians(g_fSunRotation), glm::vec3(0, -1, 0)) * glm::translate(glm::vec3(90, 0, 0));
+		glm::mat4 mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+		GLuint uniformMVP = glGetUniformLocation(g_SimpleShaderProgram, "MVP");
+		glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniform4fv(g_uniformColor, 1, glm::value_ptr(white));
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		//Next, we will draw the earth.
+		// Draw the earth.
+		glBindTexture(GL_TEXTURE_2D, g_EarthTexture);
+		glUseProgram(g_TexturedLitShaderProgram);
+
+		// Set the light position to the position of the Sun.
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrix[3]));
+		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
+
+		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(12.756f));
+		glm::vec4 eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
+
+		// Material properties.
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 50.0f);
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		// Draw the moon.
+		glBindTexture(GL_TEXTURE_2D, g_MoonTexture);
+
+		modelMatrix = glm::rotate(glm::radians(g_fSunRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::scale(glm::vec3(3.476f));
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 5.0f);
+
+
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+
+		// Draw the Stars. (NOT WORKING to create stars in a unit sphere around the camera)
+		//glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
+
+		//modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::translate(g_Camera.GetPosition());
+		//mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+		//glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		//glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+		//glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		//glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		//glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		//glUniform1f(g_uniformMaterialShininess, 50.0f);
+
+		//
+		//glFrontFace(GL_CW);
+		//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		//glFrontFace(GL_CCW);
+
+		// Draw the Stars. (WORKING: Stars in a Big sphere around everything)
+		glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
+
+		modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(100.0f));
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix; //Transforms vertices into clip space
+
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(black));
+		glUniform1f(g_uniformMaterialShininess, 0.0f);
+
+		//glDisable(GL_CULL_FACE);//Alternative method to see the inside of the sphere with the stars
+		glFrontFace(GL_CW);
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		glFrontFace(GL_CCW);
+		//glEnable(GL_CULL_FACE);
+
+
+		//The VAO, shader program, and texture should be unbound so that we leave the OpenGL 
+		//state machine the way we found it.
+
+		glBindVertexArray(0);
+		glUseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glutSwapBuffers();
 	}
 
-	//If I was ambitious, I would have the SolidSphere function return a sphere 
-	//object that stores the index count, and the ID’s of the internal VBOs that 
-	//are used to store the geometry for the sphere but that is not required for the minimal
-	//implementation here. 
-
-	//The next part of the render function will setup the uniform properties in the shader 
-	//and render the sun, earth, and moon. Let’s first draw the sun using the SimpleShader 
-	//shader program (since the sun is not textured or lit, we do not need to use the TextureLit 
-	//shader program for this)
-
-	const glm::vec4 white(1);
-	const glm::vec4 black(0);
-	const glm::vec4 ambient(0.1f, 0.1f, 0.1f, 1.0f);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	else {
 	
-	// Draw the sun using the simple shader
-	glBindVertexArray(g_vaoSphere);
+		//In the first part of the render function, we will create a sphere VAO that 
+		//can be used to render the sun, earth, and moon.
 
-	glUseProgram(g_SimpleShaderProgram);
-	glm::mat4 modelMatrix = glm::rotate(glm::radians(g_fSunRotation), glm::vec3(0, -1, 0)) * glm::translate(glm::vec3(90, 0, 0));
-	glm::mat4 mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
-	GLuint uniformMVP = glGetUniformLocation(g_SimpleShaderProgram, "MVP");
-	glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniform4fv(g_uniformColor, 1, glm::value_ptr(white));
+		int slices = 32;
+		int stacks = 32;
+		int numIndicies = (slices * stacks + slices) * 6;
+		if (g_vaoSphere == 0)
+		{
+			g_vaoSphere = SolidSphere(1, slices, stacks);
+		}
 
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		//If I was ambitious, I would have the SolidSphere function return a sphere 
+		//object that stores the index count, and the ID’s of the internal VBOs that 
+		//are used to store the geometry for the sphere but that is not required for the minimal
+		//implementation here. 
 
-	//Next, we will draw the earth.
-	// Draw the earth.
-	glBindTexture(GL_TEXTURE_2D, g_EarthTexture);
-	glUseProgram(g_TexturedLitShaderProgram);
+		//The next part of the render function will setup the uniform properties in the shader 
+		//and render the sun, earth, and moon. Let’s first draw the sun using the SimpleShader 
+		//shader program (since the sun is not textured or lit, we do not need to use the TextureLit 
+		//shader program for this)
 
-	// Set the light position to the position of the Sun.
-	glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrix[3]));
-	glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
-	glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
+		const glm::vec4 white(1);
+		const glm::vec4 black(0);
+		const glm::vec4 ambient(0.1f, 0.1f, 0.1f, 1.0f);
 
-	modelMatrix = glm::rotate(glm::radians(g_fEarthRotation), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(12.756f));
-	glm::vec4 eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
-	mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
+		// Draw the sun using the simple shader
+		glBindVertexArray(g_vaoSphere);
 
-	// Material properties.
-	glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
-	glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
-	glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
-	glUniform1f(g_uniformMaterialShininess, 50.0f);
+		glUseProgram(g_SimpleShaderProgram);
+		glm::mat4 modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, -1, 0)) * glm::scale(glm::vec3(12.756f));
+		glm::mat4 mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+		GLuint uniformMVP = glGetUniformLocation(g_SimpleShaderProgram, "MVP");
+		glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniform4fv(g_uniformColor, 1, glm::value_ptr(white));
 
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
-	// Draw the moon.
-	glBindTexture(GL_TEXTURE_2D, g_MoonTexture);
+		//Next, we will draw the earth.
+		// Draw the earth.
+		glBindTexture(GL_TEXTURE_2D, g_EarthTexture);
+		glUseProgram(g_TexturedLitShaderProgram);
 
-	modelMatrix = glm::rotate(glm::radians(g_fSunRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::scale(glm::vec3(3.476f));
-	mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+		// Set the light position to the position of the Sun.
+		glUniform4fv(g_uniformLightPosW, 1, glm::value_ptr(modelMatrix[3]));
+		glUniform4fv(g_uniformLightColor, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
 
-	glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		modelMatrix = glm::rotate(glm::radians(g_fEarthRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::rotate(glm::radians(g_fEarthRotation2), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(3.476f));
+		glm::vec4 eyePosW = glm::vec4(g_Camera.GetPosition(), 1);
+		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
 
-	glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
-	glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
-	glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
-	glUniform1f(g_uniformMaterialShininess, 5.0f);
+		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniform4fv(g_uniformEyePosW, 1, glm::value_ptr(eyePosW));
 
-	
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-	
+		// Material properties.
+		glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		glUniform1f(g_uniformMaterialShininess, 50.0f);
 
-	// Draw the Stars. (TRYING to create stars in a unit sphere around the camera)
-	//glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
+		glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
-	//modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::translate(g_Camera.GetPosition());
-	//mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+		//// Draw the moon.
+		//glBindTexture(GL_TEXTURE_2D, g_MoonTexture);
 
-	//glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
-	//glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		//modelMatrix = glm::rotate(glm::radians(g_fSunRotation), glm::vec3(0, 1, 0)) * glm::translate(glm::vec3(60, 0, 0)) * glm::scale(glm::vec3(3.476f));
+		//mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
 
-	//glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
-	//glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
-	//glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
-	//glUniform1f(g_uniformMaterialShininess, 50.0f);
+		//glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+		//glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-	//
-	//glFrontFace(GL_CW);
-	//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-	//glFrontFace(GL_CCW);
-	
-	// Draw the Stars. (WORKING: Stars in a Big sphere around everything)
-	glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
+		//glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+		//glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+		//glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+		//glUniform1f(g_uniformMaterialShininess, 5.0f);
 
-	modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(100.0f));
-	mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix; //Transforms vertices into clip space
 
-	glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
-	glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(white));
-	glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(black));
-	glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(black));
-	glUniform1f(g_uniformMaterialShininess, 0.0f);
+		//The VAO, shader program, and texture should be unbound so that we leave the OpenGL 
+		//state machine the way we found it.
 
-	//glDisable(GL_CULL_FACE);//Alternative method to see the inside of the sphere with the stars
-	glFrontFace(GL_CW);
-	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-	glFrontFace(GL_CCW);
-	//glEnable(GL_CULL_FACE);
+		glBindVertexArray(0);
+		glUseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-	
-	//The VAO, shader program, and texture should be unbound so that we leave the OpenGL 
-	//state machine the way we found it.
+		glutSwapBuffers();
 
-	glBindVertexArray(0);
-	glUseProgram(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glutSwapBuffers();
+	}
 }
 
 //(CUBE VERSION)
@@ -797,9 +899,13 @@ void IdleGL()
 	const float fRotationRate1 = 5.0f;
 	const float fRotationRate2 = 12.5f;
 	const float fRotationRate3 = 20.0f;
+	const float fRotationRate4 = 15.0f;
 
 	g_fEarthRotation += fRotationRate1 * fDeltaTime;
 	g_fEarthRotation = fmod(g_fEarthRotation, 360.0f);
+
+	g_fEarthRotation2 += fRotationRate4 * fDeltaTime;
+	g_fEarthRotation2 = fmod(g_fEarthRotation2, 360.0f);
 
 	g_fMoonRotation += fRotationRate2 * fDeltaTime;
 	g_fMoonRotation = fmod(g_fMoonRotation, 360.0f);
