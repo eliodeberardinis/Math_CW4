@@ -74,6 +74,7 @@ GLint g_uniformMaterialShininess = -1;
 
 GLuint g_EarthTexture = 0;
 GLuint g_MoonTexture = 0;
+GLuint g_StarsTextures = 0;
 
 //Define Geometry of the object. Can be done with a model loader (not in this project). It will be done in-line using static arrays
 
@@ -465,6 +466,7 @@ int main(int argc, char* argv[])
 	//Load the textures
 	g_EarthTexture = LoadTexture("../data/Textures/earth.dds");
 	g_MoonTexture = LoadTexture("../data/Textures/moon.dds");
+	g_StarsTextures = LoadTexture("../data/Textures/starfield.dds");
 
 	//Load the simple basic shaders
 	GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, "../data/simpleShader.vert");
@@ -639,7 +641,7 @@ void DisplayGL()
 	const glm::vec4 ambient(0.1f, 0.1f, 0.1f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	// Draw the sun using the simple shader
 	glBindVertexArray(g_vaoSphere);
 
@@ -692,8 +694,50 @@ void DisplayGL()
 	glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
 	glUniform1f(g_uniformMaterialShininess, 5.0f);
 
+	
 	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+	
 
+	// Draw the Stars. (TRYING to create stars in a unit sphere around the camera)
+	//glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
+
+	//modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::translate(g_Camera.GetPosition());
+	//mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix;
+
+	//glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+	//glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+	//glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
+	//glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
+	//glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
+	//glUniform1f(g_uniformMaterialShininess, 50.0f);
+
+	//
+	//glFrontFace(GL_CW);
+	//glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+	//glFrontFace(GL_CCW);
+	
+	// Draw the Stars. (WORKING: Stars in a Big sphere around everything)
+	glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
+
+	modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(100.0f));
+	mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix; //Transforms vertices into clip space
+
+	glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
+	glUniformMatrix4fv(g_uniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+	glUniform4fv(g_uniformMaterialEmissive, 1, glm::value_ptr(white));
+	glUniform4fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(black));
+	glUniform4fv(g_uniformMaterialSpecular, 1, glm::value_ptr(black));
+	glUniform1f(g_uniformMaterialShininess, 0.0f);
+
+	//glDisable(GL_CULL_FACE);//Alternative method to see the inside of the sphere with the stars
+	glFrontFace(GL_CW);
+	glDrawElements(GL_TRIANGLES, numIndicies, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+	glFrontFace(GL_CCW);
+	//glEnable(GL_CULL_FACE);
+
+	
 	//The VAO, shader program, and texture should be unbound so that we leave the OpenGL 
 	//state machine the way we found it.
 
@@ -897,7 +941,7 @@ void MotionGL(int x, int y)
 	glm::quat rotX = glm::angleAxis<float>(glm::radians(delta.y) * 0.5f, glm::vec3(1, 0, 0));
 	glm::quat rotY = glm::angleAxis<float>(glm::radians(delta.x) * 0.5f, glm::vec3(0, 1, 0));
 
-	//g_Camera.Rotate( rotX * rotY );
+	g_Camera.Rotate( rotX * rotY );
 	//g_Rotation = (rotX * rotY) * g_Rotation;
 }
 
