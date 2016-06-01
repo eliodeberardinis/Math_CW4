@@ -512,11 +512,6 @@ void ReshapeGL(int w, int h)
 //window needs to be redrawn (which is guaranteed to occur whenever the 
 //glutPostRedisplay method is called).
 
-//(For the cube example)
-//If the camera moves or the cube rotates, we need to update the MVP matrix. 
-//We do this by first computing the combined MVP matrix and assigning this MVP matrix 
-//to the uniform variable in the shader using the glUniformMatrix4fv method
-
 //For the Earth example
 //To render this scene, we’ll draw 3 spheres. The first sphere will represent the sun. 
 //This will be an unlit white sphere that will rotate about 90,000 Km around the center of the scene. 
@@ -525,6 +520,8 @@ void ReshapeGL(int w, int h)
 //stays fixed at the center of the scene(the Earth will not be translated).
 //The final object will be the moon.The moon appears to rotate around the earth but at a distance of 60, 000 Km 
 //away from the earth.
+//For the solar system example 
+//the sun will be at the centre of the universe with the planets rotating around it.
 
 void DisplayGL()
 {
@@ -539,11 +536,6 @@ void DisplayGL()
 		{
 			g_vaoSphere = SolidSphere(1, slices, stacks);
 		}
-
-		//If I was ambitious, I would have the SolidSphere function return a sphere 
-		//object that stores the index count, and the ID’s of the internal VBOs that 
-		//are used to store the geometry for the sphere but that is not required for the minimal
-		//implementation here. 
 
 		//The next part of the render function will setup the uniform properties in the shader 
 		//and render the sun, earth, and moon. Let’s first draw the sun using the SimpleShader 
@@ -614,7 +606,7 @@ void DisplayGL()
 		// Draw the Stars.
 		glBindTexture(GL_TEXTURE_2D, g_StarsTextures);
 
-		modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(100.0f));
+		modelMatrix = glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(250.0f));
 		mvp = g_Camera.GetProjectionMatrix() * g_Camera.GetViewMatrix() * modelMatrix; //Transforms vertices into clip space
 
 		glUniformMatrix4fv(g_uniformMVP, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -654,11 +646,6 @@ void DisplayGL()
 		{
 			g_vaoSphere = SolidSphere(1, slices, stacks);
 		}
-
-		//If I was ambitious, I would have the SolidSphere function return a sphere 
-		//object that stores the index count, and the ID’s of the internal VBOs that 
-		//are used to store the geometry for the sphere but that is not required for the minimal
-		//implementation here. 
 
 		//The next part of the render function will setup the uniform properties in the shader 
 		//and render the sun, earth, and moon. Let’s first draw the sun using the SimpleShader 
